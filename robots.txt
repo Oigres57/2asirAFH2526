@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://oigres57.github.io/2asirAFH2526/trabajos/sitemap.xml

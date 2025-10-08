@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+    <title>Prueba de Web - 01</title>
+    <link href="https://oigres57.github.io/2asirAFH2526/trabajos/feed.xml" rel="self" />
+    <link href="https://oigres57.github.io/2asirAFH2526/trabajos" />
+    <updated>2025-10-08T20:54:07+02:00</updated>
+    <author>
+        <name>Peter</name>
+    </author>
+    <id>https://oigres57.github.io/2asirAFH2526/trabajos</id>
+
+    <entry>
+        <title>Prueba 2</title>
+        <author>
+            <name>Peter</name>
+        </author>
+        <link href="https://oigres57.github.io/2asirAFH2526/trabajos/prueba-2.html"/>
+        <id>https://oigres57.github.io/2asirAFH2526/trabajos/prueba-2.html</id>
+
+        <updated>2025-10-08T20:54:07+02:00</updated>
+            <summary>
+                <![CDATA[
+                    Esto es una segunda prueba pra guardar en GitHub.
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                <p>Esto es una segunda prueba pra guardar en GitHub.</p>
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Título de Primer Artículo</title>
+        <author>
+            <name>Peter</name>
+        </author>
+        <link href="https://oigres57.github.io/2asirAFH2526/trabajos/titulo-de-primer-articulo.html"/>
+        <id>https://oigres57.github.io/2asirAFH2526/trabajos/titulo-de-primer-articulo.html</id>
+
+        <updated>2025-10-08T20:20:43+02:00</updated>
+            <summary>
+                <![CDATA[
+                    Este es mi primer artículo de prueba. 😉
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                <p>Este es mi primer artículo de <strong>prueba</strong>. 😉</p>
+            ]]>
+        </content>
+    </entry>
+</feed>
