@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="https://oigres57.github.io/2asirAFH2526/trabajos/sitemap.xsl"?>
+<?xml-stylesheet type="text/xsl" href="https://oigres57.github.io/2asirAFH2526/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 <url>
-<loc>https://oigres57.github.io/2asirAFH2526/trabajos/</loc>
+<loc>https://oigres57.github.io/2asirAFH2526/</loc>
 </url>
 <url>
-<loc>https://oigres57.github.io/2asirAFH2526/trabajos/prueba-2.html</loc>
-<lastmod>2025-10-08T20:54:07+02:00</lastmod>
-</url>
-<url>
-<loc>https://oigres57.github.io/2asirAFH2526/trabajos/titulo-de-primer-articulo.html</loc>
-<lastmod>2025-10-08T20:53:11+02:00</lastmod>
+<loc>https://oigres57.github.io/2asirAFH2526/prueba-inicial.html</loc>
+<lastmod>2025-10-10T16:31:57+02:00</lastmod>
 </url>
 </urlset>
