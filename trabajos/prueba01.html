@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lugares Más Visitados del Mundo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        h1 {
+            font-size: 3rem;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            font-weight: 300;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .card-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .card:hover .card-img {
+            transform: scale(1.1);
+        }
+        .card-content {
+            padding: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.8rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        .card-stats {
+            font-size: 1.1rem;
+            color: #48bb78;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .card-text {
+            color: #718096;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        .card-attractions {
+            margin-top: 1rem;
+        }
+        .card-attractions h4 {
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .attractions-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .attractions-list li {
+            margin-bottom: 0.3rem;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+        .attractions-list li::before {
+            content: '📍';
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            color: #718096;
+            margin-top: 3rem;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌍 Lugares Más Visitados del Mundo</h1>
+        <p class="subtitle">Descubre los destinos que atraen a millones de turistas en 2025</p>
+    </header>
+
+    <div class="container">
+        <div class="cards" id="cardsContainer">
+            <!-- Las tarjetas serán generadas dinámicamente -->
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Destinos del Mundo | Información basada en datos de ONU Turismo [web:5][web:1][web:10]</p>
+    </footer>
+
+    <script>
+        // Datos de los lugares más visitados
+        const lugares = [
+            {
+                nombre: "Francia",
+                visitantes: "100 millones",
+                descripcion: "Francia se mantiene como el país más visitado del mundo, gracias a su rica combinación de cultura, gastronomía, historia y paisajes naturales. Desde la elegancia de París hasta los viñedos de Burdeos, Francia ofrece una experiencia turística incomparable.",
+                atracciones: [
+                    "Torre Eiffel y Museo del Louvre en París",
+                    "Palacio de Versalles",
+                    "Mont Saint-Michel",
+                    "Riviera Francesa (Niza, Cannes)",
+                    "Región de Alsacia y los Alpes",
+                    "Isla de Córcega"
+                ],
+                imagen: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80"
+            },
+            {
+                nombre: "España",
+                visitantes: "93.7 millones",
+                descripcion: "España ocupa el segundo lugar en turismo mundial, destacando por su diversidad cultural, playas espectaculares, arquitectura única y vibrante vida nocturna. El país ofrece una mezcla perfecta de tradición y modernidad que atrae a turistas de todo el mundo.",
+                atracciones: [
+                    "Sagrada Familia y Park Güell en Barcelona",
+                    "Museo del Prado y Retiro en Madrid",
+                    "Alhambra de Granada",
+                    "Playas de la Costa del Sol y las Islas Baleares",
+                    "Ruta de vinos de La Rioja",
+                    "Festivales como La Tomatina y las Fallas"
+                ],
+                imagen: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80"
+            },
+            {
+                nombre: "Estados Unidos",
+                visitantes: "72.4 millones",
+                descripcion: "Estados Unidos se mantiene como el tercer destino más visitado, ofreciendo una enorme diversidad de experiencias turísticas. Desde las icónicas ciudades cosmopolitas hasta los impresionantes parques nacionales, el país atrae a visitantes con su cultura dinámica y paisajes naturales únicos.",
+                atracciones: [
+                    "Times Square y Central Park en Nueva York",
+                    "Walt Disney World en Orlando",
+                    "Parques Nacionales como Yellowstone y Yosemite",
+                    "Las Vegas y el Gran Cañón",
+                    "San Francisco y el puente Golden Gate",
+                    "Hawái y sus playas tropicales"
+                ],
+                imagen: "https://images.unsplash.com/photo-1506919258185-6078bba55d2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80"
+            }
+        ];
+
+        // Generar las tarjetas dinámicamente
+        const cardsContainer = document.getElementById('cardsContainer');
+
+        lugares.forEach((lugar, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${lugar.imagen}" alt="${lugar.nombre}" class="card-img">
+                <div class="card-content">
+                    <h2 class="card-title">${index + 1}. ${lugar.nombre}</h2>
+                    <p class="card-stats">📊 ${lugar.visitantes} de turistas anuales</p>
+                    <p class="card-text">${lugar.descripcion}</p>
+                    <div class="card-attractions">
+                        <h4> principales atracciones:</h4>
+                        <ul class="attractions-list">
+                            ${lugar.atracciones.map(attr => `<li>${attr}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            cardsContainer.appendChild(card);
+        });
+
+        // Animación al hacer scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Aplicar animación a las tarjetas
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
