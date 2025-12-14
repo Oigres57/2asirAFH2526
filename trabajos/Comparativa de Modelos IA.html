@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparativa de Modelos de IA</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --color-surface: #1a2332;
+            --color-surface-alt: #253549;
+            --color-primary: #e2e8f0;
+            --color-accent: #60a5fa;
+            --color-accent-light: #93c5fd;
+            --color-success: #34d399;
+            --color-warning: #fbbf24;
+            --color-error: #f87171;
+            --color-text: #e2e8f0;
+            --color-text-light: #94a3b8;
+            --color-border: #334155;
+            --color-qwen: #a78bfa;
+            --color-granite: #2dd4bf;
+            --color-gemma: #fb923c;
+            --color-ollama: #f87171;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Trebuchet MS', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.7;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(168, 139, 250, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(168, 139, 250, 0.15) 100%);
+            border-bottom: 1px solid var(--color-border);
+            padding: 4rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--color-text-light);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 16px 40px rgba(96, 165, 250, 0.2);
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            color: var(--color-text);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+            border-radius: 2px;
+        }
+
+        h3 {
+            color: var(--color-accent-light);
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        p, li {
+            margin-bottom: 0.8rem;
+            color: var(--color-text);
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .model-card {
+            background: linear-gradient(135deg, var(--color-surface-alt) 0%, var(--color-surface) 100%);
+            border-left: 5px solid var(--color-accent);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid var(--color-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(96, 165, 250, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .model-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-6px);
+        }
+
+        .model-card.qwen { border-left-color: var(--color-qwen); }
+        .model-card.qwen:hover { border-color: var(--color-qwen); box-shadow: 0 16px 40px rgba(167, 139, 250, 0.2); }
+
+        .model-card.granite { border-left-color: var(--color-granite); }
+        .model-card.granite:hover { border-color: var(--color-granite); box-shadow: 0 16px 40px rgba(45, 212, 191, 0.2); }
+
+        .model-card.gemma { border-left-color: var(--color-gemma); }
+        .model-card.gemma:hover { border-color: var(--color-gemma); box-shadow: 0 16px 40px rgba(251, 146, 60, 0.2); }
+
+        .model-card.ollama { border-left-color: var(--color-ollama); }
+        .model-card.ollama:hover { border-color: var(--color-ollama); box-shadow: 0 16px 40px rgba(248, 113, 113, 0.2); }
+
+        .model-card h4 {
+            color: var(--color-text);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .model-card p {
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+            color: var(--color-text-light);
+            position: relative;
+            z-index: 1;
+        }
+
+        .spec {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin: 0.6rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: var(--color-text-light);
+        }
+
+        .spec-value {
+            color: var(--color-accent-light);
+            font-weight: 600;
+        }
+
+        .riddles-list {
+            background: var(--color-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .riddle {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+        }
+
+        .riddle:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .riddle:hover {
+            border-bottom-color: var(--color-accent);
+        }
+
+        .riddle-title {
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .riddle-content {
+            background: var(--color-surface-alt);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid var(--color-accent);
+            border: 1px solid var(--color-border);
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .riddle-solution {
+            font-size: 0.95rem;
+            color: var(--color-success);
+            font-weight: 600;
+        }
+
+        .filters-container {
+            background: var(--color-surface);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: flex-start;
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .filter-group label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--color-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--color-border);
+            background: transparent;
+            color: var(--color-text);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--color-accent);
+            background: rgba(96, 165, 250, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--color-accent);
+            color: #0f172a;
+            border-color: var(--color-accent);
+            box-shadow: 0 8px 16px rgba(96, 165, 250, 0.3);
+        }
+
+        .filter-btn.active.qwen { background: var(--color-qwen); color: #0f172a; border-color: var(--color-qwen); box-shadow: 0 8px 16px rgba(167, 139, 250, 0.3); }
+        .filter-btn.active.granite { background: var(--color-granite); color: #0f172a; border-color: var(--color-granite); box-shadow: 0 8px 16px rgba(45, 212, 191, 0.3); }
+        .filter-btn.active.gemma { background: var(--color-gemma); color: #0f172a; border-color: var(--color-gemma); box-shadow: 0 8px 16px rgba(251, 146, 60, 0.3); }
+        .filter-btn.active.ollama { background: var(--color-ollama); color: white; border-color: var(--color-ollama); box-shadow: 0 8px 16px rgba(248, 113, 113, 0.3); }
+
+        select {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            background: var(--color-surface-alt);
+            color: var(--color-text);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        select:hover {
+            border-color: var(--color-accent);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 600px;
+            margin-top: 2rem;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+            color: #0f172a;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(96, 165, 250, 0.4);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--color-border);
+            background: linear-gradient(180deg, transparent 0%, rgba(96, 165, 250, 0.05) 100%);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .filters-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-buttons {
+                width: 100%;
+            }
+
+            .chart-container {
+                height: 400px;
+            }
+
+            .models-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📊 Comparativa de Modelos de IA</h1>
+        <p>Análisis de Rendimiento, Velocidad y Precisión</p>
+    </header>
+
+    <div class="container">
+        <!-- INTRODUCCIÓN Y METODOLOGÍA -->
+        <div class="section">
+            <h2>🎯 Introducción</h2>
+            <p>Este estudio presenta una comparativa exhaustiva de cuatro modelos de inteligencia artificial, evaluando su rendimiento en términos de velocidad, eficiencia y precisión. La investigación se llevó a cabo en dos entornos distintos: <strong>Mac Mini</strong> y <strong>Windows 11</strong>, para analizar cómo el hardware influye en el desempeño de cada modelo.</p>
+            
+            <h3>📋 Metodología</h3>
+            <p>Se evaluaron los modelos mediante:</p>
+            <ul>
+                <li><strong>Acertijos y problemas lógicos</strong>: Desde acertijos simples hasta problemas matemáticos complejos</li>
+                <li><strong>Preguntas de generación de contenido</strong>: Evaluación de la capacidad de generar respuestas detalladas</li>
+                <li><strong>Métricas de rendimiento</strong>:
+                    <ul>
+                        <li><strong>Tokens por segundo (tok/sec)</strong>: Velocidad de procesamiento</li>
+                        <li><strong>Tiempo del primer token</strong>: Latencia inicial de respuesta</li>
+                        <li><strong>Tokens totales</strong>: Eficiencia de respuesta</li>
+                        <li><strong>Precisión</strong>: Calidad de las respuestas</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- DESCRIPCIÓN DE MODELOS -->
+        <div class="section">
+            <h2>🤖 Modelos Evaluados</h2>
+            <div class="models-grid">
+                <div class="model-card qwen">
+                    <h4>Qwen3 4B</h4>
+                    <p>Modelo de tamaño medio con enfoque en respuestas completas y detalladas.</p>
+                    <div class="spec">
+                        <span class="spec-label">Tamaño:</span>
+                        <span class="spec-value">4B parámetros</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label">Plataformas:</span>
+                        <span class="spec-value">Mac Mini, Windows 11</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label">Tokens (Coste):</span>
+                        <span class="spec-value">2325-2600</span>
+                    </div>
+                </div>
+
+                <div class="model-card granite">
+                    <h4>Granite 4H Tiny</h4>
+                    <p>Modelo pequeño y rápido, optimizado para respuestas concretas y eficientes.</p>
+                    <div class="spec">
+                        <span class="spec-label">Tamaño:</span>
+                        <span class="spec-value">Tiny (optimizado)</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label">Plataformas:</span>
+                        <span class="spec-value">Mac Mini, Windows 11</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label">Tokens (Coste):</span>
+                        <span class="spec-value">601-906</span>
+                    </div>
+                </div>
+
+                <div class="model-card gemma">
+                    <h4>Gemma 3n 4B</h4>
+                    <p>Modelo equilibrado con buena calidad de respuesta y razonamiento lógico.</p>
+                    <div class="spec">
+                        <span class="spec-label">Tamaño:</span>
+                        <span class="spec-value">4B parámetros</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label">Plataformas:</span>
+                        <span class="spec-value">Mac Mini, Windows 11</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label">Tokens (Coste):</span>
+                        <span class="spec-value">1771-1937</span>
+                    </div>
+                </div>
+
+                <div class="model-card ollama">
+                    <h4>allenai/olmocr 2 7B</h4>
+                    <p>Modelo más grande especializado en reconocimiento y análisis de contenido.</p>
+                    <div class="spec">
+                        <span class="spec-label">Tamaño:</span>
+                        <span class="spec-value">7B parámetros</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label">Plataformas:</span>
+                        <span class="spec-value">Mac Mini, Windows 11</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label">Tokens (Coste):</span>
+                        <span class="spec-value">534-782</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACERTIJOS Y PROBLEMAS -->
+        <div class="section">
+            <h2>🧩 Acertijos y Problemas Utilizados</h2>
+            
+            <div class="riddles-list">
+                <div class="riddle">
+                    <div class="riddle-title">a.1 - Problema Aritmético Básico</div>
+                    <div class="riddle-content">
+                        <p><strong>Pregunta:</strong> Un granjero tiene 17 ovejas. Se mueren 9. ¿Cuántas ovejas quedan?</p>
+                        <p class="riddle-solution"><strong>Solución esperada:</strong> 8 ovejas</p>
+                    </div>
+                </div>
+
+                <div class="riddle">
+                    <div class="riddle-title">a.2 - Problema de Lógica Lateral</div>
+                    <div class="riddle-content">
+                        <p><strong>Pregunta:</strong> Un hombre vive en el décimo piso. Cuando baja, usa siempre el ascensor hasta planta baja. Cuando sube, solo lo usa hasta el séptimo, y camina tres pisos. ¿Por qué?</p>
+                        <p class="riddle-solution"><strong>Solución esperada:</strong> El hombre es muy bajo (no alcanza el botón del décimo piso)</p>
+                    </div>
+                </div>
+
+                <div class="riddle">
+                    <div class="riddle-title">a.3 - Adivinanza Simbólica</div>
+                    <div class="riddle-content">
+                        <p><strong>Pregunta:</strong> Si me tumbas soy todo, si me cortas por la cintura me quedo en nada. ¿Qué soy?</p>
+                        <p class="riddle-solution"><strong>Solución esperada:</strong> El número 8 (∞)</p>
+                    </div>
+                </div>
+
+                <div class="riddle">
+                    <div class="riddle-title">b - Problema de Lógica Combinatoria</div>
+                    <div class="riddle-content">
+                        <p><strong>Problema:</strong> Un prisionero se encuentra ante tres guardianes:</p>
+                        <ul>
+                            <li>Uno siempre dice la verdad</li>
+                            <li>Uno siempre miente</li>
+                            <li>Uno responde aleatoriamente</li>
+                        </ul>
+                        <p>Los tres saben quién es quién y el prisionero lo desconoce. Puede hacer dos preguntas sí/no en total (cada una dirigida a un único guardián a elección).</p>
+                        <p><strong>Objetivo:</strong> Determinar cuál es la puerta que lleva a la libertad entre tres puertas posibles.</p>
+                        <p class="riddle-solution"><strong>Solución esperada:</strong> Cualquier solución que indique dos preguntas y tenga en cuenta al tercer guardián</p>
+                    </div>
+                </div>
+
+                <div class="riddle">
+                    <div class="riddle-title">c - Secuencia Matemática Avanzada</div>
+                    <div class="riddle-content">
+                        <p><strong>Problema:</strong> Define una secuencia (a₁, a₂, …) así:</p>
+                        <ul>
+                            <li>a₁ = 1</li>
+                            <li>aₙ = n - a₍ₐₙ₋₁₎ para n > 1</li>
+                        </ul>
+                        <p><strong>Pregunta:</strong> ¿Cuál es el valor de a₂₀₂₅?</p>
+                        <p class="riddle-solution"><strong>Solución esperada:</strong> 1350</p>
+                    </div>
+                </div>
+
+                <div class="riddle">
+                    <div class="riddle-title">d - Paradoja Lógica Infinita</div>
+                    <div class="riddle-content">
+                        <p><strong>Problema:</strong> Tienes una máquina con un interruptor que comienza en OFF. Vas activándolo así:</p>
+                        <ul>
+                            <li>A los 30 segundos → cambias el estado</li>
+                            <li>A los 15 segundos después → lo cambias</li>
+                            <li>A los 7.5 segundos después → lo cambias</li>
+                            <li>Y así sucesivamente, cada intervalo la mitad del anterior</li>
+                        </ul>
+                        <p>Al llegar al minuto exacto, después de infinitos cambios finitos en tiempo total: ¿El interruptor queda en ON u OFF?</p>
+                        <p class="riddle-solution"><strong>Solución esperada:</strong> No acaba de ninguna de las dos formas (pregunta trampa/lógica)</p>
+                    </div>
+                </div>
+
+                <div class="riddle">
+                    <div class="riddle-title">Pregunta de Coste - Generación de Contenido</div>
+                    <div class="riddle-content">
+                        <p><strong>Pregunta:</strong> "Dame una explicación detallada de cómo se daría una clase de trigonometría de segundo de bachillerato de ciencias puras."</p>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--color-text-light);"><em>Esta pregunta se utilizó para evaluar el coste de generación de contenido detallado y la capacidad de los modelos para producir respuestas extensas.</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÉTRICAS Y GRÁFICA -->
+        <div class="section">
+            <h2>📈 Análisis de Rendimiento</h2>
+            
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label>Métrica:</label>
+                    <select id="metricSelect">
+                        <option value="speed">Tokens por Segundo (tok/sec)</option>
+                        <option value="latency">Tiempo del Primer Token (seg)</option>
+                        <option value="tokens">Tokens Totales de Respuesta</option>
+                        <option value="accuracy">Precisión (% respuestas correctas)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Plataforma:</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-platform="all">Todas</button>
+                        <button class="filter-btn" data-platform="mac">Mac Mini</button>
+                        <button class="filter-btn" data-platform="windows">Windows 11</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Modelos:</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active qwen" data-model="qwen">Qwen3</button>
+                        <button class="filter-btn active granite" data-model="granite">Granite</button>
+                        <button class="filter-btn active gemma" data-model="gemma">Gemma</button>
+                        <button class="filter-btn active ollama" data-model="ollama">OLMo</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>📊 Comparativa de Modelos de IA | Datos recopilados mediante análisis de rendimiento en Mac Mini y Windows 11</p>
+    </footer>
+
+    <script>
+        // Datos completos de la investigación
+        const fullData = {
+            macMini: {
+                qwen: {
+                    name: 'Qwen3 4B',
+                    platform: 'Mac Mini',
+                    color: '#8e44ad',
+                    tokens: 2325,
+                    riddles: [
+                        { question: 'a.1', speed: 36.34, latency: 0.96, correct: false },
+                        { question: 'a.2', speed: 38.01, latency: 1.03, correct: false },
+                        { question: 'a.3', speed: 37.39, latency: 0.56, correct: false },
+                        { question: 'b', speed: 37.91, latency: 1.35, correct: false },
+                        { question: 'c', speed: 50.08, latency: 1.28, correct: false },
+                        { question: 'd', speed: 35.87, latency: 1.33, correct: false }
+                    ]
+                },
+                granite: {
+                    name: 'Granite 4H Tiny',
+                    platform: 'Mac Mini',
+                    color: '#16a085',
+                    tokens: 601,
+                    riddles: [
+                        { question: 'a.1', speed: 43.54, latency: 0.21, correct: true },
+                        { question: 'a.2', speed: 42.11, latency: 0.23, correct: false },
+                        { question: 'a.3', speed: 43.27, latency: 0.20, correct: false },
+                        { question: 'b', speed: 43.48, latency: 0.38, correct: true },
+                        { question: 'c', speed: 42.21, latency: 1.74, correct: false },
+                        { question: 'd', speed: 42.20, latency: 0.33, correct: false }
+                    ]
+                },
+                gemma: {
+                    name: 'Gemma 3n 4B',
+                    platform: 'Mac Mini',
+                    color: '#e67e22',
+                    tokens: 1937,
+                    riddles: [
+                        { question: 'a.1', speed: 18.96, latency: 0.76, correct: true },
+                        { question: 'a.2', speed: 18.96, latency: 0.42, correct: true },
+                        { question: 'a.3', speed: 18.79, latency: 0.47, correct: true },
+                        { question: 'b', speed: 18.68, latency: 1.02, correct: true },
+                        { question: 'c', speed: 18.62, latency: 2.22, correct: false },
+                        { question: 'd', speed: 18.61, latency: 0.56, correct: false }
+                    ]
+                },
+                ollama: {
+                    name: 'allenai/olmocr 2 7B',
+                    platform: 'Mac Mini',
+                    color: '#c0392b',
+                    tokens: 534,
+                    riddles: [
+                        { question: 'a.1', speed: 43.70, latency: 0.17, correct: true },
+                        { question: 'a.2', speed: 71.42, latency: 0.091, correct: false },
+                        { question: 'a.3', speed: 67.21, latency: 0.32, correct: false },
+                        { question: 'b', speed: 32.07, latency: 1.04, correct: true },
+                        { question: 'c', speed: 21.98, latency: 0.98, correct: false },
+                        { question: 'd', speed: 61.37, latency: 1.27, correct: false }
+                    ]
+                }
+            },
+            windows: {
+                qwen: {
+                    name: 'Qwen3 4B',
+                    platform: 'Windows 11',
+                    color: '#8e44ad',
+                    tokens: 2600,
+                    riddles: [
+                        { question: 'a.1', speed: 102.54, latency: 0.04, correct: true },
+                        { question: 'a.2', speed: 99.20, latency: 0.11, correct: false },
+                        { question: 'a.3', speed: 96.07, latency: 0.11, correct: false },
+                        { question: 'b', speed: 104.03, latency: 0.28, correct: false },
+                        { question: 'c', speed: 135.07, latency: 0.26, correct: false },
+                        { question: 'd', speed: 1065.6, latency: 0.23, correct: false }
+                    ]
+                },
+                granite: {
+                    name: 'Granite 4H Tiny',
+                    platform: 'Windows 11',
+                    color: '#16a085',
+                    tokens: 906,
+                    riddles: [
+                        { question: 'a.1', speed: 71.34, latency: 0.07, correct: true },
+                        { question: 'a.2', speed: 70.70, latency: 0.09, correct: true },
+                        { question: 'a.3', speed: 71.26, latency: 0.05, correct: false },
+                        { question: 'b', speed: 67.69, latency: 0.34, correct: false },
+                        { question: 'c', speed: 57.86, latency: 0.18, correct: false },
+                        { question: 'd', speed: 70.23, latency: 0.07, correct: false }
+                    ]
+                },
+                gemma: {
+                    name: 'Gemma 3n 4B',
+                    platform: 'Windows 11',
+                    color: '#e67e22',
+                    tokens: 1771,
+                    riddles: [
+                        { question: 'a.1', speed: 40.66, latency: 0.06, correct: true },
+                        { question: 'a.2', speed: 39.67, latency: 0.06, correct: true },
+                        { question: 'a.3', speed: 41.05, latency: 0.17, correct: false },
+                        { question: 'b', speed: 42.69, latency: 0.13, correct: true },
+                        { question: 'c', speed: 42.08, latency: 0.17, correct: true },
+                        { question: 'd', speed: 42.26, latency: 0.06, correct: false }
+                    ]
+                },
+                ollama: {
+                    name: 'allenai/olmocr 2 7B',
+                    platform: 'Windows 11',
+                    color: '#c0392b',
+                    tokens: 782,
+                    riddles: [
+                        { question: 'a.1', speed: 71.10, latency: 0.03, correct: true },
+                        { question: 'a.2', speed: 78.25, latency: 0.04, correct: false },
+                        { question: 'a.3', speed: 90.57, latency: 0.14, correct: false },
+                        { question: 'b', speed: 76.81, latency: 0.08, correct: true },
+                        { question: 'c', speed: 37.70, latency: 0.17, correct: false },
+                        { question: 'd', speed: 77.96, latency: 0.08, correct: false }
+                    ]
+                }
+            }
+        };
+
+        let chart = null;
+        const activeModels = new Set(['qwen', 'granite', 'gemma', 'ollama']);
+        let activePlatform = 'all';
+        let currentMetric = 'speed';
+
+        // Actualizar gráfica
+        function updateChart() {
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            
+            const datasets = [];
+            const labels = new Set();
+
+            // Recopilar datos
+            let data = [];
+
+            if (activePlatform === 'all' || activePlatform === 'mac') {
+                Object.entries(fullData.macMini).forEach(([key, value]) => {
+                    if (activeModels.has(key)) {
+                        data.push(value);
+                    }
+                });
+            }
+            if (activePlatform === 'all' || activePlatform === 'windows') {
+                Object.entries(fullData.windows).forEach(([key, value]) => {
+                    if (activeModels.has(key)) {
+                        data.push(value);
+                    }
+                });
+            }
+
+            // Preparar datos por pregunta
+            const riddleQuestions = ['a.1', 'a.2', 'a.3', 'b', 'c', 'd'];
+            
+            data.forEach(modelData => {
+                const values = [];
+                riddleQuestions.forEach(q => {
+                    const riddle = modelData.riddles.find(r => r.question === q);
+                    if (riddle) {
+                        if (currentMetric === 'speed') {
+                            values.push(riddle.speed);
+                        } else if (currentMetric === 'latency') {
+                            values.push(riddle.latency);
+                        } else if (currentMetric === 'accuracy') {
+                            values.push(riddle.correct ? 100 : 0);
+                        }
+                    }
+                });
+
+                datasets.push({
+                    label: modelData.name + ' (' + modelData.platform + ')',
+                    data: values,
+                    borderColor: modelData.color,
+                    backgroundColor: modelData.color + '20',
+                    borderWidth: 2.5,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointBackgroundColor: modelData.color,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 7
+                });
+            });
+
+            // Usar tokens totales para métrica de tokens
+            if (currentMetric === 'tokens') {
+                const modelNames = new Map();
+                data.forEach(d => {
+                    if (!modelNames.has(d.name)) {
+                        modelNames.set(d.name, []);
+                    }
+                    modelNames.get(d.name).push(d);
+                });
+
+                const newDatasets = [];
+                modelNames.forEach((models, name) => {
+                    const values = models.map(m => m.tokens);
+                    const colors = models.map(m => m.color);
+                    
+                    newDatasets.push({
+                        label: name,
+                        data: values,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: colors,
+                        barPercentage: 0.7
+                    });
+                });
+                
+                datasets.length = 0;
+                datasets.push(...newDatasets);
+
+                if (chart) {
+                    chart.destroy();
+                }
+
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(d => d.platform).filter((v, i, a) => a.indexOf(v) === i),
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { font: { size: 12, weight: 'bold' }, padding: 15, usePointStyle: true }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Tokens Totales por Modelo',
+                                font: { size: 16, weight: 'bold' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Tokens', font: { weight: 'bold' } }
+                            }
+                        }
+                    }
+                });
+            } else {
+                if (chart) {
+                    chart.destroy();
+                }
+
+                const metricLabel = currentMetric === 'speed' ? 'Tokens/seg' : 
+                                    currentMetric === 'latency' ? 'Segundos' : 'Precisión (%)';
+                const chartTitle = currentMetric === 'speed' ? 'Velocidad de Procesamiento (Tokens/seg)' :
+                                   currentMetric === 'latency' ? 'Latencia del Primer Token (segundos)' :
+                                   'Precisión de Respuestas (%)';
+
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: riddleQuestions,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { font: { size: 12, weight: 'bold' }, padding: 15, usePointStyle: true }
+                            },
+                            title: {
+                                display: true,
+                                text: chartTitle,
+                                font: { size: 16, weight: 'bold' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: currentMetric === 'accuracy',
+                                max: currentMetric === 'accuracy' ? 100 : undefined,
+                                title: { display: true, text: metricLabel, font: { weight: 'bold' } }
+                            },
+                            x: {
+                                title: { display: true, text: 'Acertijos y Problemas', font: { weight: 'bold' } }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Mapeo de keys internos a nombres de modelos
+        const modelKeyMap = {
+            'qwen': 'qwen',
+            'granite': 'granite',
+            'gemma': 'gemma',
+            'ollama': 'ollama'
+        };
+
+        // Event listeners
+        document.getElementById('metricSelect').addEventListener('change', (e) => {
+            currentMetric = e.target.value;
+            updateChart();
+        });
+
+        document.querySelectorAll('[data-platform]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('[data-platform]').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                activePlatform = e.target.dataset.platform;
+                updateChart();
+            });
+        });
+
+        document.querySelectorAll('[data-model]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const model = e.target.dataset.model;
+                if (activeModels.has(model)) {
+                    activeModels.delete(model);
+                    e.target.classList.remove('active');
+                } else {
+                    activeModels.add(model);
+                    e.target.classList.add('active');
+                }
+                updateChart();
+            });
+        });
+
+        // Inicializar gráfica
+        updateChart();
+    </script>
+</body>
+</html>
