@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía: Agentes de IA Locales con OpenCode</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e293b;
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        header h1 { margin: 0; font-size: 2.5rem; }
+        header p { opacity: 0.8; font-size: 1.1rem; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        h3 { color: var(--primary-color); margin-top: 1.5rem; }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: #e2e8f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #d63384;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.95rem;
+        }
+
+        .img-placeholder {
+            background-color: #e2e8f0;
+            border: 2px dashed #94a3b8;
+            color: #64748b;
+            padding: 3rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .note {
+            background-color: #dbeafe;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Despliegue de Agentes de IA Locales</h1>
+    <p>Guía paso a paso usando LM Studio y OpenCode</p>
+</header>
+
+<div class="container">
+
+    <section id="intro">
+        <h2>1. ¿Qué es un Agente de IA?</h2>
+        <p>
+            Un modelo de lenguaje (LLM) tradicional es como un "cerebro en una caja": es brillante pero no tiene acceso al mundo exterior. 
+            Un <strong>Agente</strong> utiliza protocolos (como MCP) para darle "manos" a ese cerebro, permitiéndole ejecutar herramientas, 
+            consultar la hora o interactuar con el sistema operativo.
+        </p>
+        <div class="note">
+            <strong>Objetivo:</strong> En esta guía configuraremos un entorno local donde el modelo <em>Qwen 2.5 Coder</em> (cerebro) 
+            utilizará <em>OpenCode</em> (manos) para asistir en tareas de programación.
+        </div>
+    </section>
+
+    <section id="prerrequisitos">
+        <h2>2. Preparación del Entorno: Node.js</h2>
+        <p>OpenCode requiere Node.js para funcionar. Para asegurar la compatibilidad y gestión de versiones, utilizaremos <code>nvm</code> (Node Version Manager).</p>
+        
+        <h3>Paso 2.1: Instalación de NVM</h3>
+        <p>Ejecutamos el siguiente comando en la terminal para descargar el script de instalación:</p>
+        <pre>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v8.40.3/install.sh</pre>
+
+        <h3>Paso 2.2: Instalación de Node v24</h3>
+        <p>Una vez instalado NVM, procedemos a instalar la versión 24 de Node.js:</p>
+        <pre>nvm install 24</pre>
+        <p>Verificamos la instalación correcta comprobando las versiones:</p>
+        <pre>
+node -v  // Debería devolver v24.13.0
+npm -v   // Debería devolver 11.6.2
+        </pre>
+
+        <div class="img-placeholder">
+            <img src="media/Agentes_1.png" style="width:100%; border-radius:10px;">
+        </div>
+    </section>
+
+    <section id="lm-studio">
+        <h2>3. Servidor de Inferencia: LM Studio</h2>
+        <p>Utilizaremos LM Studio para correr nuestro LLM localmente. Esto servirá como el "proveedor" de inteligencia para OpenCode.</p>
+        
+        <ul>
+            <li><strong>Modelo seleccionado:</strong> Qwen 2.5 Coder 7B Instruct.</li>
+            <li><strong>Servidor Local:</strong> Debe estar ejecutándose en el puerto <code>1234</code>.</li>
+        </ul>
+
+        <div class="img-placeholder">
+            <img src="media/Agentes_2.png" style="width:100%; border-radius:10px;">
+        </div>
+    </section>
+
+    <section id="opencode">
+        <h2>4. Instalación de OpenCode</h2>
+        <p>OpenCode es la herramienta de agente que se integrará en nuestro flujo de trabajo.</p>
+        
+        <h3>Instalación vía Terminal</h3>
+        <p>Ejecuta el script de instalación automática:</p>
+        <pre>curl -fsSL https://opencode.ai/install | bash</pre>
+        <p>Una vez instalado (versión aprox. 1.1.34+), puedes iniciar la herramienta o verificarla con el comando <code>opencode</code>.</p>
+
+        <div class="img-placeholder">
+            <img src="media/Agentes_3.png" style="width:100%; border-radius:10px;">
+        </div>
+    </section>
+
+    <section id="configuracion">
+        <h2>5. Configuración del Agente</h2>
+        <p>Para que OpenCode hable con nuestro modelo local en LM Studio, debemos editar el archivo <code>opencode.json</code>.</p>
+        
+        <h3>Archivo: opencode.json</h3>
+        <p>Debemos configurar el proveedor como compatible con OpenAI (que es lo que emula LM Studio) y apuntar al puerto local.</p>
+
+        <pre>
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "lmstudio": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM Studio Local",
+      "options": {
+        "baseURL": "http://127.0.0.1:1234/v1"
+      },
+      "models": {
+        "qwen2.5-coder-7b-instruct": {
+          "name": "Qwen 2.5 Coder 7B"
+        }
+      }
+    }
+  }
+}
+        </pre>
+
+        <div class="img-placeholder">
+            <img src="media/Agentes_4.png" style="width:100%; border-radius:10px;">
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <p>Agentes de IA - 2026</p>
+</footer>
+
+</body>
+</html>
