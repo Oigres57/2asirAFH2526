@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass: Cuantización de Modelos IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5; /* Índigo vibrante */
+            --secondary: #10b981; /* Verde esmeralda */
+            --accent: #f59e0b; /* Ámbar */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --code-bg: #f1f5f9;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white;
+            padding: 4rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 { margin: 0; font-size: 2.5rem; font-weight: 700; }
+        header p { font-size: 1.1rem; opacity: 0.9; margin-top: 1rem; }
+
+        .container {
+            max-width: 1000px;
+            margin: -3rem auto 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid #eef2ff;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .highlight-box {
+            background-color: #f0fdf4;
+            border-left: 5px solid var(--secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .step-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 99px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: #334155;
+            padding: 1.2rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .screenshot-area {
+            background: #fdfdfd;
+            border: 2px dashed #cbd5e1;
+            color: #94a3b8;
+            padding: 3rem 1rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            font-style: italic;
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-area:hover {
+            border-color: var(--primary);
+            background: #f8fafc;
+        }
+
+        .grid-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .tag-blue { background: #e0e7ff; color: #4338ca; }
+        .tag-green { background: #dcfce7; color: #15803d; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-info { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Optimización de Modelos de Lenguaje</h1>
+    <p>Guía técnica sobre la cuantización de Phi-3 en entornos Apple Silicon</p>
+</header>
+
+<div class="container">
+
+    <section class="card">
+        <h2>¿Qué es la Cuantización?</h2>
+        <p>
+            La cuantización es una técnica de optimización que consiste en reducir la <strong>precisión numérica</strong> de los pesos de una red neuronal. Los modelos originales suelen trabajar en <code>FP32</code> (32 bits), lo que consume una cantidad inmensa de memoria VRAM.
+        </p>
+        <div class="highlight-box">
+            <strong>El Concepto:</strong> Es similar a convertir una imagen de alta resolución (RAW) en un formato comprimido (JPEG). Perdemos una cantidad mínima de detalle, pero ganamos una agilidad que permite ejecutar el modelo en hardware doméstico como un Mac Mini.
+        </div>
+        <p>
+            En este proyecto, hemos pasado un modelo de precisión <strong>Float16</strong> a <strong>4-bit (Q4_K_M)</strong>, lo que permite que el conocimiento fundamental se mantenga intacto mientras el tamaño del archivo se reduce drásticamente.
+        </p>
+    </section>
+
+    <section class="card">
+        <span class="step-badge">Paso 01</span>
+        <h3>Configuración del Entorno de Desarrollo</h3>
+        <p>
+            Trabajar en macOS requiere una gestión cuidadosa de las dependencias. Utilizamos un entorno virtual (venv) para evitar conflictos con las librerías del sistema y clonamos <code>llama.cpp</code>, que es el framework líder para ejecutar modelos en CPUs y GPUs de Apple de forma nativa.
+        </p>
+        <pre>
+# Crear directorio de trabajo
+mkdir ejercicio-cuantizacion && cd ejercicio-cuantizacion
+
+# Clonar herramienta de conversión
+git clone https://github.com/ggerganov/llama.cpp.git
+
+# Aislar el entorno de Python
+python3 -m venv venv
+source venv/bin/activate
+pip install -r llama.cpp/requirements.txt</pre>
+        
+        <div class="screenshot-area">
+            <img src="media/Cuantizacion_1.png" style="width:100%; border-radius:10px;">
+        </div>
+    </section>
+
+    <section class="card">
+        <span class="step-badge">Paso 02</span>
+        <h3>Adquisición del Modelo Base (Phi-3)</h3>
+        <p>
+            Seleccionamos el modelo <strong>Phi-3-mini-4k-instruct</strong> de Microsoft. Es un "Small Language Model" (SLM) extremadamente eficiente. Lo descargamos desde Hugging Face en su formato original de alta precisión.
+        </p>
+        <div class="grid-info">
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px;">
+                <strong>Modelo:</strong> Phi-3-mini<br>
+                <strong>Parámetros:</strong> 3.8 Billones<br>
+                <strong>Formato original:</strong> Safetensors (FP16)
+            </div>
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px;">
+                <strong>Peso inicial:</strong> ~7.5 GB<br>
+                <strong>Hardware:</strong> Apple M-Series<br>
+                <strong>Memoria:</strong> Unificada
+            </div>
+        </div>
+        
+        <div class="screenshot-area">
+            <img src="media/Cuantizacion_2.png" style="width:100%; border-radius:10px;">
+        </div>
+    </section>
+
+    <section class="card">
+        <span class="step-badge">Paso 03</span>
+        <h3>Ejecución de la Cuantización GGUF</h3>
+        <p>
+            Este es el núcleo del proceso. Convertimos el formato de Hugging Face a <strong>GGUF</strong>, un formato optimizado para inferencia local. Utilizamos el método <code>q4_k_m</code> (4 bits con K-means medio), considerado el "estándar de oro" por ofrecer el mejor equilibrio entre peso y perplejidad (inteligencia).
+        </p>
+        <pre>python llama.cpp/convert-hf-to-gguf.py ./Phi-3-mini-4k-instruct/ --outtype q4_k_m --outfile phi-3-mini-q4.gguf</pre>
+        
+        <div class="screenshot-area">
+            <img src="media/Cuantizacion_3.png" style="width:100%; border-radius:10px;">
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Resultados Finales y Comparativa</h2>
+        <p>Tras la cuantización, los resultados son sorprendentes. El modelo no solo es más pequeño, sino que es capaz de cargarse íntegramente en la memoria unificada del Mac Mini.</p>
+        
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0;">
+                <thead>
+                    <tr style="background: var(--primary); color: white;">
+                        <th style="padding: 1rem; text-align: left; border-radius: 8px 0 0 0;">Versión</th>
+                        <th style="padding: 1rem; text-align: left;">Precisión</th>
+                        <th style="padding: 1rem; text-align: left;">Tamaño</th>
+                        <th style="padding: 1rem; text-align: left; border-radius: 0 8px 0 0;">Rendimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 1rem;">Original HF</td>
+                        <td style="padding: 1rem;"><span class="tag tag-blue">FP16</span></td>
+                        <td style="padding: 1rem;">7.5 GB</td>
+                        <td style="padding: 1rem;">Lento en CPU</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 1rem;">Cuantizado</td>
+                        <td style="padding: 1rem;"><span class="tag tag-green">Q4_K_M</span></td>
+                        <td style="padding: 1rem;">2.2 GB</td>
+                        <td style="padding: 1rem;">Ultra-rápido</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="screenshot-area">
+            <img src="media/Cuantizacion_4.png" style="width:100%; border-radius:10px;">
+        </div>
+
+        <h3>Verificación en LM Studio</h3>
+        <p>
+            Para validar el proceso, cargamos el archivo <code>.gguf</code> en <strong>LM Studio</strong>. La respuesta fue instantánea, con un consumo de recursos mínimo y una calidad de respuesta idéntica a la versión pesada en tareas de asistencia general.
+        </p>
+        
+        <div class="screenshot-area">
+            <img src="media/Cuantizacion_5.png" style="width:100%; border-radius:10px;">
+        </div>
+    </section>
+
+    <footer>
+        <p>Cuantización de LLMs</p>
+    </footer>
+
+</div>
+
+</body>
+</html>
