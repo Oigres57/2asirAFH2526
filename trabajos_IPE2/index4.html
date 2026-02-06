@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopRadar - Tu app de ofertas cercanas</title>
+    <style>
+        /* --- VARIABLES Y ESTILOS VIVOS --- */
+        :root {
+            --primary-orange: #ff6b35; 
+            --primary-blue: #1565c0;   
+            --bg-color: #e3f2fd;       
+            --card-bg: #ffffff;        
+            --text-color: #37474f;     
+            --accent-green: #00c853;   
+            --shadow: 0 4px 20px rgba(21, 101, 192, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: #ffffff;
+            padding: 1rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-orange);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo span { color: var(--primary-blue); }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        nav button {
+            background: transparent;
+            border: 2px solid transparent;
+            color: var(--primary-blue);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+            border-radius: 25px;
+        }
+
+        nav button:hover {
+            background-color: #e3f2fd;
+            color: var(--primary-orange);
+        }
+
+        nav button.active {
+            background-color: var(--primary-orange);
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 107, 53, 0.4);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            background: linear-gradient(135deg, #bbdefb 0%, #e3f2fd 100%);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p.slogan {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #546e7a;
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        /* --- INTRODUCCIÓN FUNCIONES --- */
+        .app-functions {
+            max-width: 1000px;
+            margin: 0 auto 3rem auto;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 15px;
+        }
+
+        .app-functions h2 {
+            color: var(--primary-orange);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .functions-list {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            text-align: left;
+        }
+
+        .function-item {
+            flex: 1 1 200px;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .function-icon {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        /* --- NUEVO ESTILO PARA LA IMAGEN --- */
+        .hero-image-mockup {
+            text-align: center;
+            margin: 0 auto 3rem auto;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-image-mockup img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            /* Sombra suave y borde blanco para efecto de profundidad profesional */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border: 3px solid #ffffff;
+        }
+
+        /* --- FORMULARIO --- */
+        .waitlist-form {
+            background: var(--card-bg);
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid #bbdefb;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        input[type="email"] {
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 2px solid #bbdefb;
+            background: #f1f8e9;
+            color: #333;
+            width: 65%;
+            outline: none;
+        }
+
+        button.cta {
+            background-color: var(--primary-blue);
+            border: none;
+            padding: 12px 25px;
+            color: white;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button.cta:hover {
+            background-color: var(--primary-orange);
+            transform: translateY(-2px);
+        }
+
+        /* --- TABS --- */
+        .tab-content {
+            display: none;
+            padding: 3rem 5%;
+            animation: slideUp 0.5s ease-out;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tab-content.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+            font-size: 1.15rem;
+            color: #546e7a;
+        }
+
+        .tab-content h2 {
+            font-size: 2.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* --- GRID DE 6 TARJETAS --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.8rem;
+            border-radius: 15px;
+            border-top: 5px solid var(--primary-orange);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: var(--primary-blue); margin-bottom: 0.8rem; font-size: 1.25rem; }
+        .solidario-card { border-top-color: var(--accent-green); }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--primary-blue);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 2rem; }
+            .input-group { flex-direction: column; }
+            input[type="email"] { width: 100%; }
+            nav ul { justify-content: center; }
+            .functions-list { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><span>Shop</span>Radar</div>
+        <nav>
+            <ul>
+                <li><button class="tab-link active" onclick="openTab('inicio')">Inicio</button></li>
+                <li><button class="tab-link" onclick="openTab('hosteleria')">Hostelería</button></li>
+                <li><button class="tab-link" onclick="openTab('turismo')">Turismo</button></li>
+                <li><button class="tab-link" onclick="openTab('retail')">Comercio Local</button></li>
+                <li><button class="tab-link" onclick="openTab('solidario')">Solidaridad</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="inicio" class="tab-content active">
+        <section class="hero">
+            <h1>Ofertas que te encuentran a ti</h1>
+            <p class="slogan">"La compra no te dolerá si con nuestra app la vas a realizar"</p>
+            
+            <div class="app-functions">
+                <h2>¿Qué hace ShopRadar por ti?</h2>
+                <div class="functions-list">
+                    <div class="function-item">
+                        <div class="function-icon">📍</div>
+                        <div>
+                            <strong>Geolocalización</strong>
+                            <p>Detecta ofertas activas cerca de tu posición.</p>
+                        </div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-icon">🧭</div>
+                        <div>
+                            <strong>Navegación GPS</strong>
+                            <p>Te guiamos a la puerta del comercio.</p>
+                        </div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-icon">🔍</div>
+                        <div>
+                            <strong>Buscador Global</strong>
+                            <p>Encuentra productos en todos los sectores.</p>
+                        </div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-icon">💰</div>
+                        <div>
+                            <strong>Ahorro Real</strong>
+                            <p>Compara precios locales al instante.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-image-mockup">
+                <img src="imagen1.png" alt="Mockup de la aplicación ShopRadar en un móvil mostrando ofertas en un mapa">
+            </div>
+            <div class="waitlist-form">
+                <h3>🚀 ¡Únete a la fase de introducción!</h3>
+                <p>Regístrate ahora y disfruta de <strong>1 AÑO GRATIS</strong> de servicio premium.</p>
+                <form onsubmit="alert('¡Gracias! Te avisaremos muy pronto.'); return false;">
+                    <div class="input-group">
+                        <input type="email" placeholder="Tu correo electrónico..." required>
+                        <button type="submit" class="cta">¡Quiero mi año gratis!</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="info-grid" style="margin-top: 3rem;">
+            <div class="card">
+                <h3>📍 Cercanía Total</h3>
+                <p>Tu radar personal para encontrar lo que necesitas a menos de 500 metros, ahorrando tiempo y desplazamiento.</p>
+            </div>
+            <div class="card">
+                <h3>🛡️ Máxima Seguridad</h3>
+                <p>Protección de datos con cifrado avanzado, antivirus y firewalls para una navegación 100% segura.</p>
+            </div>
+            <div class="card">
+                <h3>🤝 Apoyo a PYMES</h3>
+                <p>Impulsamos la economía local conectándote con pequeños comercios frente a las grandes multinacionales.</p>
+            </div>
+            <div class="card">
+                <h3>📱 Diseño Intuitivo</h3>
+                <p>Interfaz "user-friendly" diseñada para que cualquier persona, experta o no, pueda usarla sin dificultad.</p>
+            </div>
+            <div class="card">
+                <h3>📢 Difusión en Redes</h3>
+                <p>Una comunidad activa que crece gracias a nuestra presencia en TikTok, X y Facebook para traerte las mejores ofertas.</p>
+            </div>
+            <div class="card">
+                <h3>🆓 Prueba Gratuita</h3>
+                <p>Creemos en la transparencia: prueba el servicio completo gratis antes de decidir si te quedas con nosotros.</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="hosteleria" class="tab-content">
+        <h2>🍽️ Hostelería y Gastronomía</h2>
+        <p class="tab-intro">Descubre los sabores de tu ciudad al mejor precio con actualizaciones en tiempo real.</p>
+        
+        <div class="info-grid">
+            <div class="card">
+                <h3>Menús del Día</h3>
+                <p>Consulta los menús actualizados de restaurantes cercanos sin tener que ir puerta por puerta.</p>
+            </div>
+            <div class="card">
+                <h3>Ofertas Flash</h3>
+                <p>Alertas de "Happy Hour" y descuentos de última hora en cenas para aprovechar al máximo tu ocio.</p>
+            </div>
+            <div class="card">
+                <h3>Visibilidad Local</h3>
+                <p>Descubre bares familiares y joyas gastronómicas que no aparecen en las guías turísticas masivas.</p>
+            </div>
+            <div class="card">
+                <h3>📞 Soporte 24 Horas</h3>
+                <p>¿Problemas con una reserva o promoción? Nuestro equipo de atención al cliente está disponible las 24 horas.</p>
+            </div>
+            <div class="card">
+                <h3>👨‍👩‍👧‍👦 Plan Familiar</h3>
+                <p>Consigue descuentos adicionales y códigos promocionales para cenas en familia o grupos de amigos.</p>
+            </div>
+            <div class="card">
+                <h3>⭐ Valoraciones Reales</h3>
+                <p>Un sistema de opiniones y encuestas verificado para que elijas siempre el restaurante con mejor calidad de servicio.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="turismo" class="tab-content">
+        <h2>✈️ Turismo y Experiencias</h2>
+        <p class="tab-intro">Tu guía de bolsillo para viajar de forma inteligente y auténtica.</p>
+        
+        <div class="info-grid">
+            <div class="card">
+                <h3>GPS Gratuito</h3>
+                <p>Guíate por la ciudad sin salir de la app. Te llevamos desde tu hotel hasta la experiencia deseada.</p>
+            </div>
+            <div class="card">
+                <h3>Ocio Cultural</h3>
+                <p>Encuentra entradas y actividades de ocio locales a precios reales, evitando las "trampas para turistas".</p>
+            </div>
+            <div class="card">
+                <h3>Experiencias Reales</h3>
+                <p>Conecta con guías y agencias locales pequeñas para vivir el destino como un habitante más.</p>
+            </div>
+            <div class="card">
+                <h3>☎️ Asesoramiento en Viaje</h3>
+                <p>Dispones de un servicio telefónico de ayuda para resolver dudas sobre el uso de la app durante tu viaje.</p>
+            </div>
+            <div class="card">
+                <h3>🤳 Colaboración Influencer</h3>
+                <p>Descubre rutas secretas y "hotspots" recomendados por tus influencers de viajes favoritos asociados a ShopRadar.</p>
+            </div>
+            <div class="card">
+                <h3>📲 Multidispositivo</h3>
+                <p>App optimizada para funcionar fluida en cualquier smartphone o tablet, ideal para viajeros en movimiento.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="retail" class="tab-content">
+        <h2>🛍️ Comercio Local y Retail</h2>
+        <p class="tab-intro">Encuentra el producto exacto que buscas en la tienda de la esquina.</p>
+        
+        <div class="info-grid">
+            <div class="card">
+                <h3>Stock en Tiempo Real</h3>
+                <p>Localiza qué tienda cercana tiene ese producto específico que necesitas hoy mismo.</p>
+            </div>
+            <div class="card">
+                <h3>Comparador Zonal</h3>
+                <p>Analiza precios entre comercios vecinos para asegurarte la compra más inteligente y económica.</p>
+            </div>
+            <div class="card">
+                <h3>Competitividad Digital</h3>
+                <p>Ayudamos al pequeño comercio a ofrecerte precios y servicios que compiten con los gigantes online.</p>
+            </div>
+            <div class="card">
+                <h3>✅ Solución de Incidencias</h3>
+                <p>Si tienes algún problema en el comercio adherido, intervenimos para ofrecerte una solución inmediata.</p>
+            </div>
+            <div class="card">
+                <h3>🔄 Actualizaciones Continuas</h3>
+                <p>Nuestro equipo técnico mejora constantemente la plataforma para que las tiendas te ofrezcan siempre lo último.</p>
+            </div>
+            <div class="card">
+                <h3>🏷️ Fidelización y Ahorro</h3>
+                <p>Acumula ventajas y descuentos especiales al repetir tus compras en tus comercios de barrio favoritos.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="solidario" class="tab-content">
+        <h2 style="color: var(--accent-green);">🌱 Compromiso Solidario</h2>
+        <p class="tab-intro">Una tecnología con valores, enfocada en las personas y el planeta.</p>
+        
+        <div class="info-grid">
+            <div class="card solidario-card">
+                <h3>🏦 Banca Ética (Triodos)</h3>
+                <p>Operamos con <strong>Triodos Bank</strong> para garantizar que nuestro capital financia solo proyectos sostenibles y sociales.</p>
+            </div>
+            <div class="card solidario-card">
+                <h3>🎗️ Tarifa Caritativa</h3>
+                <p>Puedes elegir donar el extra de tu suscripción directamente a ONGs con las que colaboramos.</p>
+            </div>
+            <div class="card solidario-card">
+                <h3>📉 Apoyo a Empresas</h3>
+                <p>Ofrecemos suscripciones gratuitas a negocios locales en riesgo para ayudarles a subsistir.</p>
+            </div>
+            <div class="card solidario-card">
+                <h3>🗣️ Escucha Activa</h3>
+                <p>Tu opinión importa. Realizamos encuestas periódicas y tenemos un buzón de sugerencias para mejorar juntos.</p>
+            </div>
+            <div class="card solidario-card">
+                <h3>👵 Accesibilidad Universal</h3>
+                <p>Diseño simplificado para reducir la brecha digital, facilitando el uso a personas mayores o con pocos conocimientos técnicos.</p>
+            </div>
+            <div class="card solidario-card">
+                <h3>🔒 Ética de Datos</h3>
+                <p>No comercializamos con tus datos. Usamos cifrado robusto porque tu privacidad es un derecho, no un producto.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <h3>ShopRadar</h3>
+        <p>&copy; 2026 ShopRadar. Todos los derechos reservados.</p>
+        <p>Síguenos en: TikTok, X, Facebook e Instagram.</p>
+    </footer>
+
+    <script>
+        function openTab(tabName) {
+            var i, tabContent, tabLinks;
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+                tabContent[i].classList.remove("active");
+            }
+            tabLinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            setTimeout(() => {
+                document.getElementById(tabName).classList.add("active");
+            }, 10);
+            event.currentTarget.classList.add("active");
+        }
+    </script>
+
+</body>
+</html>
