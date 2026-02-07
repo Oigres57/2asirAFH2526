@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Creación: Chef-Bot LLM Local</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; }
+        header { background: #2c3e50; color: #fff; padding: 2rem; border-radius: 8px; text-align: center; margin-bottom: 2rem; }
+        h2 { color: #2980b9; border-bottom: 2px solid #2980b9; padding-bottom: 10px; margin-top: 2rem; }
+        .step { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+        code { background: #272822; color: #f8f8f2; padding: 2px 5px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; }
+        pre { background: #272822; color: #f8f8f2; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 0.9rem; }
+        .image-placeholder { background: #e0e0e0; border: 2px dashed #999; color: #666; text-align: center; padding: 40px; margin: 20px 0; font-style: italic; border-radius: 8px; }
+        .info-box { background: #d1ecf1; border-left: 5px solid #0c5460; padding: 15px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Creación de un LLM Local: Proyecto Chef-Bot</h1>
+    <p>Guía técnica basada en el modelo Phi-3-mini-4k-instruct</p>
+</header>
+
+<section class="step">
+    <h2>1. Preparación del Entorno y Modelo Base</h2>
+    <p>El primer paso consiste en configurar el espacio de trabajo y clonar las herramientas necesarias para la cuantización y el manejo de los modelos.</p>
+    <ul>
+        <li><strong>Modelo utilizado:</strong> <code>Phi-3-mini-4k-instruct</code></li>
+        <li><strong>Directorio de trabajo:</strong> <code>ejercicio-llm</code></li>
+    </ul>
+    <pre>
+mkdir ejercicio-llm
+cd ejercicio-llm
+python3 -m venv venv
+source venv/bin/activate
+git clone https://github.com/ggerganov/llama.cpp.git
+pip install -r llama.cpp/requirements.txt</pre>
+    
+    <div class="image-placeholder">
+        <img src="media/LLM_1.png" style="width:100%; border-radius:10px;">
+    </div>
+</section>
+
+<section class="step">
+    <h2>2. Preparación del Dataset (Fine-Tuning)</h2>
+    <p>Para especializar al modelo en cocina, creamos un archivo <code>train.jsonl</code> con ejemplos de instrucciones y respuestas personalizadas.</p>
+    <div class="info-box">
+        <strong>Ejemplo de dato:</strong> "Tengo pechugas de pollo, limón y ajo" -> "Puedes preparar unas Pechugas de Pollo al Limón...".
+    </div>
+    <div class="image-placeholder">
+        <img src="media/LLM_2.png" style="width:100%; border-radius:10px;">
+    </div>
+</section>
+
+<section class="step">
+    <h2>3. Entrenamiento con MLX (LoRA)</h2>
+    <p>Se ejecuta el entrenamiento utilizando adaptadores LoRA para inyectar el nuevo conocimiento sin modificar todos los parámetros del modelo.</p>
+    <pre>python -m mlx_lm lora --model microsoft/Phi-3-mini-4k-instruct --train --data ./data --iters 1000 --batch-size 1 --learning-rate 2e-5 --adapter-path ./chef-bot-adapters</pre>
+    <p>Durante el proceso, observamos la reducción del <strong>Validation Loss</strong> (de 1.861 a 0.012 aprox.) a lo largo de las 1000 iteraciones.</p>
+    <div class="image-placeholder">
+        <img src="media/LLM_3.png" style="width:100%; border-radius:10px;">
+    </div>
+</section>
+
+<section class="step">
+    <h2>4. Fusión y Conversión a GGUF</h2>
+    <p>Una vez entrenado, fusionamos los adaptadores con el modelo base y lo convertimos al formato GGUF para su uso eficiente en hardware local.</p>
+    <pre>mlx_lm.fuse --model microsoft/Phi-3-mini-4k-instruct --adapter-path ./chef-bot-adapters --save-path ./chef-bot-merged</pre>
+    <p>Posteriormente, convertimos a <strong>F16</strong> para asegurar compatibilidad con llama.cpp</p>
+    <pre>python llama.cpp/convert_hf_to_gguf.py ./chef-bot-merged --outfile chef-bot-f16.gguf --outtype f16</pre>
+    <div class="image-placeholder">
+        <img src="media/LLM_4.png" style="width:100%; border-radius:10px;">
+        <br><br>
+        <img src="media/LLM_5.png" style="width:100%; border-radius:10px;">
+    </div>
+</section>
+
+<section class="step">
+    <h2>5. Prueba Final</h2>
+    <p>El resultado es un modelo capaz de sugerir recetas precisas, como una ensalada Caprese al detectar tomates, mozzarella y albahaca.</p>
+    <div class="info-box" style="background: #d4edda; border-left-color: #28a745;">
+        <strong>Resultado:</strong> "La opción perfecta es una ensalada Caprese... corta los tomates y la mozzarella... aliña con aceite de oliva".
+    </div>
+    <div class="image-placeholder">
+        <img src="media/LLM_6.png" style="width:100%; border-radius:10px;">
+    </div>
+</section>
+
+</body>
+</html>
