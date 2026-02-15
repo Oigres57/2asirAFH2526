@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trabajo de Destilación de Conocimiento en Modelos de Lenguaje</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  /* Tipografía y colores base */
+  body {
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f0f2f5;
+    color: #222;
+  }
+
+  header, footer {
+    background: linear-gradient(135deg, #1f1f1f, #3a3a3a);
+    color: #fff;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  main {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    animation: fadeIn 0.6s ease;
+  }
+
+  h1, h2, h3 {
+    color: #222;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  h2 {
+    margin-top: 2.5rem;
+    border-left: 6px solid #4a90e2;
+    padding-left: 0.8rem;
+  }
+
+  h3 {
+    margin-top: 1.8rem;
+    color: #444;
+  }
+
+  p, ul, li {
+    font-size: 1.05rem;
+  }
+
+  ul {
+    padding-left: 1.4rem;
+  }
+
+  /* Código */
+  pre {
+    background: #1e1e1e;
+    color: #eaeaea;
+    padding: 1.2rem;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    border: 1px solid #333;
+  }
+
+  code {
+    font-family: "JetBrains Mono", "SF Mono", Consolas, monospace;
+  }
+
+  /* Notas */
+  .note {
+    background: #fff4d2;
+    border-left: 5px solid #ffb300;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1.5rem 0;
+  }
+
+  /* Capturas */
+  .screenshot {
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .screenshot img {
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+    transition: transform 0.25s ease;
+  }
+
+  .screenshot img:hover {
+    transform: scale(1.02);
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 3rem;
+    font-size: 0.95rem;
+  }
+
+  /* Animación suave */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+</head>
+<body>
+  <header>
+    <h1>Trabajo: Destilación de Conocimiento en IA</h1>
+    <p>Proceso seguido por Sergio para destilar un modelo de lenguaje (ejercicio educativo)</p>
+  </header>
+
+  <main>
+    <section id="introduccion">
+      <h2>1. Introducción</h2>
+      <p>
+        En este trabajo se documenta el proceso seguido para realizar un ejercicio educativo de
+        destilación de conocimiento aplicado a modelos de lenguaje. La destilación es un proceso
+        de entrenamiento en el que un modelo grande (profesor) transfiere su comportamiento a
+        un modelo más pequeño (estudiante), buscando que este último sea mucho más eficiente
+        manteniendo gran parte de la “inteligencia” del primero.
+      </p>
+      <p>
+        La guía principal utilizada ha sido el documento «Curso IA. Destilación», donde se explica
+        que la destilación “es un proceso de entrenamiento para transferir el ‘conocimiento oscuro’
+        de un modelo grande a uno pequeño” y que el estudiante “aprenda a ‘imitar el razonamiento’
+        del profesor”.
+      </p>
+
+      <div class="note">
+        Nota: el proceso no se completó al 100&nbsp;% por falta de tiempo e impaciencia, por lo que
+        la destilación completa y la verificación final del modelo no llegaron a realizarse.
+      </div>
+    </section>
+
+    <section id="teoria">
+      <h2>2. Resumen teórico de la destilación</h2>
+      <p>
+        Según la guía, la destilación de conocimiento en LLMs consiste en entrenar un modelo
+        estudiante usando no solo las etiquetas “duras” (correctas), sino también las salidas
+        probabilísticas del modelo profesor (etiquetas “blandas” o <em>soft labels</em>). Esto permite
+        capturar matices y relaciones entre clases que el profesor ha aprendido durante su
+        entrenamiento.
+      </p>
+      <ul>
+        <li><strong>Modelo profesor:</strong> modelo grande y potente, costoso de ejecutar.</li>
+        <li><strong>Modelo estudiante:</strong> modelo más pequeño y rápido, con arquitectura similar.</li>
+        <li><strong>Conocimiento oscuro:</strong> distribución de probabilidades sobre las clases, no solo la clase ganadora.</li>
+      </ul>
+      <p>
+        La guía también destaca beneficios como la reducción de costes de inferencia, la posibilidad
+        de desplegar modelos en dispositivos con recursos limitados y la retención de capacidades
+        complejas en un modelo más compacto.
+      </p>
+    </section>
+
+    <section id="entorno">
+      <h2>3. Preparación del entorno de trabajo</h2>
+      <p>
+        El primer paso fue crear un entorno de trabajo en macOS para aislar las dependencias del
+        proyecto y poder instalar las librerías necesarias: <code>torch</code> y <code>transformers</code>.
+      </p>
+
+      <h3>3.1. Creación del entorno virtual</h3>
+      <pre><code>cd ejercicio-destilacion
+python3 -m venv venv_destilacion
+source venv_destilacion/bin/activate
+pip install torch transformers</code></pre>
+
+      <div class="screenshot">
+        <img src="media/Destilacion_1.png" alt="Creación del entorno virtual e instalación de librerías">
+        <p><em>Aquí va la captura de la creación del entorno y la instalación de <code>torch</code> y <code>transformers</code>.</em></p>
+      </div>
+    </section>
+
+    <section id="scripts">
+      <h2>4. Scripts creados durante el proceso</h2>
+
+      <h3>4.1. Script de entrenamiento y destilación</h3>
+      <p>
+        A partir de la guía, se decidió implementar un enfoque más manual (sin usar
+        <code>Trainer</code> de Hugging Face) para entender mejor el bucle de destilación. Se creó el
+        archivo <code>entrenar_destilacion.py</code>, donde se cargan el modelo profesor y el estudiante,
+        el dataset IMDB y se define el bucle de entrenamiento con destilación.
+      </p>
+
+      <pre><code>import torch
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from datasets import load_dataset
+
+# 1. Configuración
+teacher_model_name = "bert-base-uncased"
+student_model_name = "distilbert-base-uncased"
+batch_size = 8
+epochs = 1  # Se puede aumentar más tarde
+temperature = 2.0
+
+device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+print(f"Usando device: {device}")
+
+# 2. Cargar modelos y tokenizadores
+teacher_tokenizer = AutoTokenizer.from_pretrained(teacher_model_name)
+student_tokenizer = AutoTokenizer.from_pretrained(student_model_name)
+
+teacher_model = AutoModelForSequenceClassification.from_pretrained(
+    teacher_model_name, num_labels=2
+).to(device)
+student_model = AutoModelForSequenceClassification.from_pretrained(
+    student_model_name, num_labels=2
+).to(device)
+
+teacher_model.eval()
+student_model.train()
+
+# 3. Cargar dataset IMDB
+dataset = load_dataset("imdb")
+
+def tokenize(batch):
+    return teacher_tokenizer(batch["text"], padding=True, truncation=True, max_length=128)
+
+train_data = dataset["train"].map(tokenize, batched=True)
+train_data.set_format(type="torch", columns=["input_ids", "attention_mask", "label"])
+
+# 4. DataLoader
+train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+
+# 5. Optimizador
+optimizer = torch.optim.Adam(student_model.parameters(), lr=5e-5)
+
+# 6. Bucle de destilación (esquema general)
+for epoch in range(epochs):
+    print(f"Epoch {epoch+1}/{epochs}")
+    for batch in train_loader:
+        inputs = {
+            "input_ids": batch["input_ids"].to(device),
+            "attention_mask": batch["attention_mask"].to(device),
+        }
+        labels = batch["label"].to(device)
+
+        # Forward del profesor (sin gradiente)
+        with torch.no_grad():
+            teacher_outputs = teacher_model(**inputs)
+            teacher_logits = teacher_outputs.logits
+
+        # Forward del estudiante
+        student_outputs = student_model(**inputs, labels=labels)
+        student_logits = student_outputs.logits
+        student_loss = student_outputs.loss
+
+        # Pérdida de destilación (KL Divergence)
+        loss_distillation = F.kl_div(
+            input=F.log_softmax(student_logits / temperature, dim=-1),
+            target=F.softmax(teacher_logits / temperature, dim=-1),
+            reduction="batchmean",
+        ) * (temperature ** 2)
+
+        # Combinación de pérdidas
+        loss = 0.2 * student_loss + 0.8 * loss_distillation
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        # Aquí se podrían imprimir logs de pérdida periódicamente
+
+# (Opcional) Guardar el modelo estudiante destilado
+# student_model.save_pretrained("modelo_destilado_final")
+# student_tokenizer.save_pretrained("modelo_destilado_final")</code></pre>
+
+      <div class="screenshot">
+        <img src="media/Destilacion_4.png" alt="Ejecución del script de destilación">
+
+        <p><em>Aquí va la captura de la ejecución del script de destilación y los mensajes de carga de modelos.</em></p>
+      </div>
+
+      <p>
+        Durante el desarrollo se encontró un error típico al construir el diccionario de
+        <code>inputs</code>, debido a que algunos elementos del batch eran listas en lugar de tensores
+        (error <code>'list' object has no attribute 'to'</code>). Esto se corrigió filtrando y usando solo
+        las claves que realmente son tensores (<code>input_ids</code> y <code>attention_mask</code>).
+      </p>
+
+      <h3>4.2. Script de verificación del modelo destilado</h3>
+      <p>
+        Siguiendo la idea de la guía, se creó un segundo script, <code>verificar_destilacion.py</code>,
+        pensado para cargar el modelo destilado desde un directorio local y probarlo con
+        frases de ejemplo (una positiva y una negativa).
+      </p>
+
+      <pre><code>from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import torch
+
+model_dir = "./modelo_destilado_final"
+device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+
+# 1. Cargar modelo
+model = AutoModelForSequenceClassification.from_pretrained(model_dir).to(device)
+tokenizer = AutoTokenizer.from_pretrained(model_dir)
+model.eval()
+
+# 2. Ejemplos de prueba
+texts = [
+    "I loved this movie, it was amazing!",
+    "This was a terrible film, very boring."
+]
+
+inputs = tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(device)
+outputs = model(**inputs).logits
+predictions = torch.argmax(outputs, dim=-1)
+
+for text, pred in zip(texts, predictions):
+    etiqueta = "Positiva" if pred.item() == 1 else "Negativa"
+    print(f"Texto: {text}\nPredicción: {etiqueta}\n")</code></pre>
+
+      <div class="screenshot">
+        <img src="media/Destilacion_5.png" alt="Error al verificar el modelo destilado">
+        <p><em>Aquí va la captura del intento de verificación y el error sobre el repo id/ruta del modelo.</em></p>
+      </div>
+
+      <p>
+        Como el modelo destilado no llegó a guardarse correctamente (la destilación no se completó),
+        la verificación falló con un error relacionado con el identificador del repositorio/ruta
+        (<code>Repo id must use alphanumeric chars...</code>) al intentar cargar
+        <code>./modelo_destilado_final</code>.
+      </p>
+    </section>
+
+    <section id="problemas">
+      <h2>5. Problemas encontrados y limitaciones</h2>
+      <ul>
+        <li><strong>Tiempo de entrenamiento:</strong> la destilación completa requiere tiempo de cómputo; por impaciencia y falta de tiempo no se completó el proceso.</li>
+        <li><strong>Errores de tipos en el DataLoader:</strong> se produjo un error al intentar usar <code>.to(device)</code> sobre listas; fue necesario ajustar el tratamiento del batch.</li>
+        <li><strong>Guardado y carga del modelo:</strong> al no ejecutar la parte de guardado del modelo estudiante, el directorio <code>modelo_destilado_final</code> no existía o no estaba bien formado, provocando errores al verificar.</li>
+      </ul>
+
+      <h1>Archivos utilizados:</h1>
+      <h2>entrenar_destilacion.py</h2>
+      <div class="screenshot">
+        <img src="media/Destilacion_3.png" alt="Archivo de entrenamiento">
+      </div>
+      <h2>verificar_destilacion.py</h2>
+      <div class="screenshot">
+        <img src="media/Destilacion_2.png" alt="Archivo de verificación">
+      </div>
+    </section>
+
+    <section id="conclusiones">
+      <h2>6. Conclusiones y posibles mejoras</h2>
+      <p>
+        Aunque la destilación no se completó, el trabajo permitió:
+      </p>
+      <ul>
+        <li><strong>Comprender la teoría básica</strong> de la destilación de conocimiento y el papel del profesor y el estudiante.</li>
+        <li><strong>Configurar un entorno de trabajo</strong> con <code>torch</code>, <code>transformers</code> y <code>datasets</code>.</li>
+        <li><strong>Implementar un bucle de destilación</strong> con combinación de pérdida supervisada y pérdida de destilación (KL Divergence con temperatura).</li>
+        <li><strong>Detectar y depurar errores</strong> relacionados con tipos de datos, rutas de modelos y carga desde Hugging Face.</li>
+      </ul>
+      <p>
+        Como trabajo futuro, se podría:
+      </p>
+      <ul>
+        <li>Completar varias épocas de entrenamiento hasta obtener un modelo estudiante razonablemente bueno.</li>
+        <li>Guardar correctamente el modelo destilado y repetir la verificación con frases de prueba.</li>
+        <li>Medir de forma cuantitativa la reducción de parámetros y la mejora en velocidad frente al modelo profesor.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>Trabajo de destilación de conocimiento en IA — Sergio</p>
+  </footer>
+</body>
+</html>
