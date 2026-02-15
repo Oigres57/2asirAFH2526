@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pre-entrenamiento de un Nano-Modelo tipo Transformer con Don Quijote</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --primary: #2b59c3;
+      --text: #1a1a1a;
+      --muted: #555;
+      --radius: 12px;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* Barra de navegación */
+    nav {
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 10;
+    }
+
+    nav a {
+      margin-right: 1.5rem;
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    header {
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.6rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    section {
+      background: var(--card);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-top: 0;
+    }
+
+    pre {
+      background: #eef1f6;
+      padding: 1rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      font-size: 0.9rem;
+    }
+
+    .screenshot {
+      margin: 1.5rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .screenshot img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Pre-entrenamiento de un Nano-Modelo de Lenguaje con Don Quijote</h1>
+  <p>
+    Esta página describe el proceso completo que he seguido para realizar un pre-entrenamiento educativo
+    de un modelo de lenguaje muy pequeño (tipo Transformer) usando como único corpus
+    <em>Don Quijote de la Mancha</em>.
+  </p>
+</header>
+
+<main>
+  <section id="introduccion">
+    <h2>1. Contexto y objetivo del trabajo</h2>
+    <p>
+      El objetivo del proyecto ha sido entender, de forma práctica, cómo funciona el pre-entrenamiento
+      de un modelo de lenguaje: desde la preparación del dataset y la tokenización, hasta la definición
+      de la arquitectura Transformer, el bucle de entrenamiento y la generación de texto.
+    </p>
+    <p>
+      Para ello he seguido como guía el documento <strong>“Curso IA. Pre-Entrenamiento”</strong>, y he
+      documentado mi propio proceso con capturas de pantalla y archivos de código.
+    </p>
+
+    <!-- Captura 1: Vista general de la carpeta del proyecto (entrenar.py y quijote.txt) -->
+    <div class="screenshot">
+      <!-- Sustituye ruta_de_tu_imagen_1.png por la ruta real -->
+      <img src="media/Pre-Entrenamiento_1.png" alt="Carpeta del proyecto con entrenar.py y quijote.txt" />
+      <p>Figura 1. Estructura inicial de la carpeta del proyecto.</p>
+    </div>
+  </section>
+
+  <section id="teoria">
+    <h2>2. Conceptos teóricos clave</h2>
+
+    <h3>2.1. Pre-entrenamiento</h3>
+    <p>
+      El pre-entrenamiento es la fase en la que un modelo de lenguaje aprende patrones del idioma
+      y conocimiento general a partir de grandes cantidades de texto. La tarea básica consiste en
+      predecir el siguiente token (palabra o carácter) a partir del contexto anterior.
+    </p>
+
+    <h3>2.2. Tokenización</h3>
+    <p>
+      Un modelo no trabaja directamente con texto, sino con números. El tokenizador es el componente
+      que convierte caracteres o sub-palabras en IDs enteros y viceversa. En este proyecto he usado
+      una tokenización a nivel de <strong>carácter</strong>, construyendo un vocabulario con todos los
+      caracteres únicos presentes en el libro.
+    </p>
+
+    <h3>2.3. Arquitectura Transformer</h3>
+    <p>
+      El modelo que he implementado es un nano-Transformer, con capas de auto-atención (self-attention),
+      múltiples cabezas de atención y capas feed-forward. Aunque es muy pequeño comparado con modelos
+      como GPT-4, sigue los mismos principios: atención, embeddings de tokens y posiciones, bloques
+      apilados y una capa final de clasificación sobre el vocabulario.
+    </p>
+  </section>
+
+  <section id="dataset">
+    <h2>3. Preparación del dataset</h2>
+    <h3>3.1. Descarga del texto de Don Quijote</h3>
+    <p>
+      El corpus utilizado ha sido <em>Don Quijote de la Mancha</em>, descargado en formato texto plano
+      (UTF-8) desde el Proyecto Gutenberg / UPM:
+    </p>
+    <ul>
+      <li><strong>Enlace al texto:</strong> <a href="https://babel.upm.es/~angel/teaching/pps/quijote.txt" target="_blank">quijote.txt</a></li>
+    </ul>
+    <p>
+      El archivo se ha guardado en la carpeta del proyecto con el nombre <code>quijote.txt</code>.
+    </p>
+
+    <!-- Captura 2: Contenido inicial de quijote.txt abierto en el editor -->
+    <div class="screenshot">
+      <img src="media/Pre-Entrenamiento_3.png" alt="Contenido de quijote.txt en el editor" />
+      <p>Figura 2. Archivo quijote.txt con el texto de Don Quijote.</p>
+    </div>
+
+    <h3>3.2. Creación del vocabulario de caracteres</h3>
+    <p>En Python, he leído el archivo y he creado el vocabulario de caracteres únicos:</p>
+    <pre><code>with open('quijote.txt', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+chars = sorted(list(set(text)))
+vocab_size = len(chars)
+print("".join(chars))
+print(f"Tamaño del vocabulario: {vocab_size}")</code></pre>
+    <p>
+      Este vocabulario define todos los símbolos que el modelo puede “entender” y generar.
+    </p>
+  </section>
+
+  <section id="tokenizador">
+    <h2>4. Implementación del tokenizador simple</h2>
+    <p>
+      A partir del vocabulario, he definido dos diccionarios: de carácter a entero (<code>stoi</code>)
+      y de entero a carácter (<code>itos</code>), junto con funciones de codificación y decodificación:
+    </p>
+    <pre><code>stoi = { ch:i for i, ch in enumerate(chars) }
+itos = { i:ch for i, ch in enumerate(chars) }
+
+encode = lambda s: [stoi[c] for c in s]          # string → lista de enteros
+decode = lambda l: "".join([itos[i] for i in l]) # lista de enteros → string
+
+print(encode("DON QUIJOTE"))
+print(decode(encode("DON QUIJOTE")))</code></pre>
+  </section>
+
+  <section id="modelo">
+    <h2>5. Definición y entrenamiento del nano-Transformer</h2>
+
+    <h3>5.1. Hiperparámetros y carga de datos</h3>
+    <p>
+      En el archivo <code>entrenar.py</code> he definido los hiperparámetros principales del modelo
+      y del entrenamiento (tamaño de batch, longitud de contexto, número de iteraciones, etc.),
+      así como la división del dataset en entrenamiento y validación:
+    </p>
+    <pre><code>batch_size   = 32
+block_size   = 128
+max_iters    = 5000
+eval_interval = 500
+learning_rate = 3e-4
+device       = 'cuda' if torch.cuda.is_available() else 'cpu'
+n_embd       = 256
+n_head       = 4
+n_layer      = 4
+dropout      = 0.2
+
+data = torch.tensor(encode(text), dtype=torch.long)
+n = int(0.9 * len(data))
+train_data = data[:n]
+val_data   = data[n:]</code></pre>
+
+    <p>También he definido una función <code>get_batch</code> para obtener lotes de secuencias:</p>
+    <pre><code>def get_batch(split):
+    data = train_data if split == 'train' else val_data
+    ix = torch.randint(len(data) - block_size, (batch_size,))
+    x = torch.stack([data[i:i+block_size]     for i in ix])
+    y = torch.stack([data[i+1:i+block_size+1] for i in ix])
+    x, y = x.to(device), y.to(device)
+    return x, y</code></pre>
+
+    <!-- Captura 4: entrenar.py abierto en el editor con la sección de hiperparámetros -->
+    <div class="screenshot">
+      <img src="media/Pre-Entrenamiento_2.png" alt="Archivo entrenar.py con hiperparámetros" />
+      <p>Figura 4. Definición de hiperparámetros y carga de datos en entrenar.py.</p>
+    </div>
+
+    <h3>5.2. Arquitectura del modelo</h3>
+    <p>
+      El modelo se compone de cabezas de atención, bloques multi-cabeza, capas feed-forward y
+      bloques Transformer apilados. Finalmente, una capa lineal proyecta a la dimensión del vocabulario.
+    </p>
+    <p>Ejemplo de la clase <code>LanguageModel</code> (resumen):</p>
+    <pre><code>class LanguageModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.token_embedding_table    = nn.Embedding(vocab_size, n_embd)
+        self.position_embedding_table = nn.Embedding(block_size, n_embd)
+        self.blocks = nn.Sequential(*[
+            Block(n_embd, n_head=n_head) for _ in range(n_layer)
+        ])
+        self.ln_f   = nn.LayerNorm(n_embd)
+        self.lm_head = nn.Linear(n_embd, vocab_size)
+
+    def forward(self, idx, targets=None):
+        B, T = idx.shape
+        tok_emb = self.token_embedding_table(idx)
+        pos_emb = self.position_embedding_table(torch.arange(T, device=device))
+        x = tok_emb + pos_emb
+        x = self.blocks(x)
+        x = self.ln_f(x)
+        logits = self.lm_head(x)
+        # cálculo de loss si hay targets...
+        return logits, loss</code></pre>
+
+    <h3>5.3. Bucle de entrenamiento</h3>
+    <p>
+      El entrenamiento se realiza durante varias iteraciones, evaluando periódicamente el
+      <em>loss</em> en entrenamiento y validación:
+    </p>
+    <pre><code>optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+
+for iter in range(max_iters):
+    if iter % eval_interval == 0:
+        losses = estimate_loss()
+        print(f"Iteración {iter}: loss entrenamiento {losses['train']:.4f}, "
+              f"loss val {losses['val']:.4f}")
+
+    xb, yb = get_batch('train')
+    logits, loss = model(xb, yb)
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    optimizer.step()</code></pre>
+
+    <!-- Captura 6: Salida de la terminal mostrando la evolución del loss -->
+    <div class="screenshot">
+      <img src="media/Pre-Entrenamiento_5.png" alt="Evolución del loss durante el entrenamiento" />
+      <p>Figura 6. Pérdida de entrenamiento y validación a lo largo de las iteraciones.</p>
+    </div>
+  </section>
+
+  <section id="resultados">
+    <h2>6. Resultados y generación de texto</h2>
+    <p>
+      Una vez finalizado el entrenamiento, el modelo es capaz de generar texto carácter a carácter
+      imitando el estilo de Cervantes. El proceso de generación parte de un contexto inicial y va
+      muestreando el siguiente token más probable.
+    </p>
+    <p>Ejemplo de generación (resumen de lo obtenido):</p>
+    <pre><code>Tú: Don Quijote
+
+Modelo:
+Don Quijote más parado no traban no a veranda, en su
+gral acado que para a la con Oy llego, poiendos de llego a lla ventida...</code></pre>
+
+    <!-- Captura 7: Ejemplo de conversación con el modelo en la terminal -->
+    <div class="screenshot">
+      <img src="media/Pre-Entrenamiento_4.png" alt="Chat con el modelo Quijote en la terminal" />
+      <p>Figura 7. Interacción de prueba con el modelo entrenado.</p>
+    </div>
+  </section>
+
+  <section id="chat-local">
+    <h2>7. Script de chat local</h2>
+    <p>
+      Además del entrenamiento, he creado un pequeño script (<code>chat_local.py</code>) para cargar
+      el modelo entrenado y conversar con él desde la terminal. Este script:
+    </p>
+    <ul>
+      <li><strong>Carga</strong> el vocabulario desde un archivo JSON.</li>
+      <li><strong>Reconstruye</strong> el modelo <code>LanguageModel</code> y carga los pesos.</li>
+      <li><strong>Implementa</strong> una función <code>generar()</code> para producir texto a partir de un prompt.</li>
+    </ul>
+
+    <pre><code>model = LanguageModel()
+model.load_state_dict(torch.load("modelo_quijote.pth", map_location=device))
+model.to(device)
+model.eval()
+
+def generar(prompt, max_tokens=200, temperature=1.0):
+    tokens = encode(prompt)
+    if len(tokens) == 0:
+        tokens = [0]
+    x = torch.tensor(tokens, dtype=torch.long, device=device)[None, :]
+    # bucle de generación...</code></pre>
+
+    <!-- Captura 8: Código de chat_local.py en el editor -->
+    <div class="screenshot">
+      <img src="media/Pre-Entrenamiento_6.png" alt="Script chat_local.py para conversar con el modelo" />
+      <p>Figura 8. Script para chatear con el modelo de Don Quijote.</p>
+    </div>
+  </section>
+
+  <section id="recursos">
+    <h2>8. Recursos y enlaces utilizados</h2>
+    <ul>
+      <li><strong>Guía principal:</strong> Documento “Curso IA. Pre-Entrenamiento”.</li>
+      <li><strong>Texto de Don Quijote:</strong> <a href="https://babel.upm.es/~angel/teaching/pps/quijote.txt" target="_blank">quijote.txt</a></li>
+      <li><strong>Conversaciones y notas adicionales:</strong>
+        <ul>
+          <li><a href="https://gemini.google.com/share/43fe4cb7b5ba" target="_blank">Enlace 1 (Gemini)</a></li>
+          <li><a href="https://gemini.google.com/share/799910bc3a6d" target="_blank">Enlace 2 (Gemini)</a></li>
+        </ul>
+      </li>
+      <li><strong>Librería usada:</strong> PyTorch (versión 2.10.0 en el entorno mostrado).</li>
+    </ul>
+  </section>
+
+  <section id="conclusiones">
+    <h2>9. Conclusiones</h2>
+    <p>
+      Aunque el modelo entrenado es muy pequeño y su calidad está lejos de los grandes LLM actuales,
+      el proceso reproduce los pasos esenciales del pre-entrenamiento real: tokenización, arquitectura
+      Transformer, función de pérdida, bucle de entrenamiento y generación de texto.
+    </p>
+    <p>
+      Este ejercicio me ha permitido comprender de forma práctica qué ocurre “por dentro” cuando se
+      entrena un modelo de lenguaje desde cero.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2026 – Trabajo de pre-entrenamiento con IA.</p>
+</footer>
+</body>
+</html>
